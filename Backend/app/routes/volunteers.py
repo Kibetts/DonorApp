@@ -4,7 +4,7 @@ from app.models.volunteer import Volunteer
 from app.services.email_service import EmailService
 from app.services.validation_service import ValidationService
 
-bp = Blueprint('volunteers', __name__)
+bp = Blueprint('volunteers_bp', __name__)
 
 @bp.route('/apply', methods=['POST'])
 def apply():

@@ -1,84 +1,47 @@
 from flask import Blueprint, request, jsonify
 from app.extensions import db
-from app.models.newsletter import NewsletterSubscriber
-from app.services.email_service import EmailService
-from app.services.validation_service import ValidationService
+from app.models.story import Story
+from datetime import datetime
 
-bp = Blueprint('newsletter', __name__)
+bp = Blueprint('stories_bp', __name__)
 
-@bp.route('/subscribe', methods=['POST'])
-def subscribe():
-    """Subscribe to newsletter"""
-    data = request.get_json()
-    
-    # Validate email
-    if 'email' not in data:
-        return jsonify({'error': 'Email is required'}), 400
-    
-    is_valid, email = ValidationService.validate_email_address(data['email'])
-    if not is_valid:
-        return jsonify({'error': 'Invalid email address'}), 400
-    
+@bp.route('/', methods=['GET'])
+def list_stories():
+    """List all published stories"""
     try:
-        # Check if already subscribed
-        existing = NewsletterSubscriber.query.filter_by(email=email).first()
+        featured_only = request.args.get('featured', 'false').lower() == 'true'
+        category = request.args.get('category')
+        limit = request.args.get('limit', type=int)
         
-        if existing:
-            if existing.is_active:
-                return jsonify({'message': 'Already subscribed'}), 200
-            else:
-                # Reactivate subscription
-                existing.is_active = True
-                existing.unsubscribed_at = None
-                db.session.commit()
-                return jsonify({'success': True, 'message': 'Subscription reactivated'}), 200
+        query = Story.query.filter(Story.published_at.isnot(None))
         
-        # Create new subscriber
-        subscriber = NewsletterSubscriber(
-            email=email,
-            first_name=data.get('first_name'),
-            last_name=data.get('last_name')
-        )
+        if featured_only:
+            query = query.filter_by(is_featured=True)
         
-        db.session.add(subscriber)
-        db.session.commit()
+        if category:
+            query = query.filter_by(category=category)
         
-        # Send confirmation email
-        EmailService.send_newsletter_confirmation(subscriber)
+        query = query.order_by(Story.published_at.desc())
+        
+        if limit:
+            query = query.limit(limit)
+        
+        stories = query.all()
         
         return jsonify({
-            'success': True,
-            'message': 'Successfully subscribed to newsletter'
-        }), 201
-        
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'error': str(e)}), 500
-
-@bp.route('/unsubscribe', methods=['POST'])
-def unsubscribe():
-    """Unsubscribe from newsletter"""
-    data = request.get_json()
-    
-    if 'email' not in data:
-        return jsonify({'error': 'Email is required'}), 400
-    
-    try:
-        subscriber = NewsletterSubscriber.query.filter_by(email=data['email']).first()
-        
-        if not subscriber:
-            return jsonify({'error': 'Email not found'}), 404
-        
-        from datetime import datetime
-        subscriber.is_active = False
-        subscriber.unsubscribed_at = datetime.utcnow()
-        db.session.commit()
-        
-        return jsonify({
-            'success': True,
-            'message': 'Successfully unsubscribed'
+            'stories': [s.to_dict() for s in stories]
         }), 200
-        
     except Exception as e:
-        db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+@bp.route('/<int:story_id>', methods=['GET'])
+def get_story(story_id):
+    """Get a specific story"""
+    story = Story.query.get_or_404(story_id)
+    return jsonify(story.to_dict()), 200
+
+@bp.route('/<string:slug>', methods=['GET'])
+def get_story_by_slug(slug):
+    """Get a story by slug"""
+    story = Story.query.filter_by(slug=slug).first_or_404()
+    return jsonify(story.to_dict()), 200

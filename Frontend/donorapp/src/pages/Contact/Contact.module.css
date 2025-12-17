@@ -1,0 +1,35 @@
+.contact {
+  padding: var(--spacing-2xl) 0;
+}
+
+.contactGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-2xl);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.contactInfo h3 {
+  margin-bottom: var(--spacing-md);
+  color: var(--primary-color);
+}
+
+.infoItem {
+  margin-top: var(--spacing-lg);
+}
+
+.infoItem h4 {
+  margin-bottom: var(--spacing-xs);
+  color: var(--text-primary);
+}
+
+.infoItem p {
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .contactGrid {
+    grid-template-columns: 1fr;
+  }
+}

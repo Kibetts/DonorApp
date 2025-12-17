@@ -1,84 +1,69 @@
 from flask import Blueprint, request, jsonify
 from app.extensions import db
-from app.models.newsletter import NewsletterSubscriber
-from app.services.email_service import EmailService
-from app.services.validation_service import ValidationService
+from app.models.program import Program
 
-bp = Blueprint('newsletter', __name__)
+bp = Blueprint('programs_bp', __name__)
 
-@bp.route('/subscribe', methods=['POST'])
-def subscribe():
-    """Subscribe to newsletter"""
-    data = request.get_json()
-    
-    # Validate email
-    if 'email' not in data:
-        return jsonify({'error': 'Email is required'}), 400
-    
-    is_valid, email = ValidationService.validate_email_address(data['email'])
-    if not is_valid:
-        return jsonify({'error': 'Invalid email address'}), 400
-    
+@bp.route('/', methods=['GET'])
+def list_programs():
+    """List all active programs"""
     try:
-        # Check if already subscribed
-        existing = NewsletterSubscriber.query.filter_by(email=email).first()
+        featured_only = request.args.get('featured', 'false').lower() == 'true'
+        category = request.args.get('category')
         
-        if existing:
-            if existing.is_active:
-                return jsonify({'message': 'Already subscribed'}), 200
-            else:
-                # Reactivate subscription
-                existing.is_active = True
-                existing.unsubscribed_at = None
-                db.session.commit()
-                return jsonify({'success': True, 'message': 'Subscription reactivated'}), 200
+        query = Program.query.filter_by(status='active')
         
-        # Create new subscriber
-        subscriber = NewsletterSubscriber(
-            email=email,
-            first_name=data.get('first_name'),
-            last_name=data.get('last_name')
-        )
+        if featured_only:
+            query = query.filter_by(is_featured=True)
         
-        db.session.add(subscriber)
-        db.session.commit()
+        if category:
+            query = query.filter_by(category=category)
         
-        # Send confirmation email
-        EmailService.send_newsletter_confirmation(subscriber)
+        programs = query.order_by(Program.created_at.desc()).all()
         
         return jsonify({
-            'success': True,
-            'message': 'Successfully subscribed to newsletter'
-        }), 201
-        
+            'programs': [p.to_dict() for p in programs]
+        }), 200
     except Exception as e:
-        db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
-@bp.route('/unsubscribe', methods=['POST'])
-def unsubscribe():
-    """Unsubscribe from newsletter"""
+@bp.route('/<int:program_id>', methods=['GET'])
+def get_program(program_id):
+    """Get a specific program"""
+    program = Program.query.get_or_404(program_id)
+    return jsonify(program.to_dict()), 200
+
+@bp.route('/<string:slug>', methods=['GET'])
+def get_program_by_slug(slug):
+    """Get a program by slug"""
+    program = Program.query.filter_by(slug=slug).first_or_404()
+    return jsonify(program.to_dict()), 200
+
+@bp.route('/', methods=['POST'])
+def create_program():
+    """Create a new program (admin only)"""
     data = request.get_json()
     
-    if 'email' not in data:
-        return jsonify({'error': 'Email is required'}), 400
-    
     try:
-        subscriber = NewsletterSubscriber.query.filter_by(email=data['email']).first()
+        program = Program(
+            title=data['title'],
+            slug=data['slug'],
+            description=data['description'],
+            short_description=data.get('short_description'),
+            category=data.get('category'),
+            image_url=data.get('image_url'),
+            goal_amount=data.get('goal_amount'),
+            location=data.get('location'),
+            is_featured=data.get('is_featured', False)
+        )
         
-        if not subscriber:
-            return jsonify({'error': 'Email not found'}), 404
-        
-        from datetime import datetime
-        subscriber.is_active = False
-        subscriber.unsubscribed_at = datetime.utcnow()
+        db.session.add(program)
         db.session.commit()
         
         return jsonify({
             'success': True,
-            'message': 'Successfully unsubscribed'
-        }), 200
-        
+            'program': program.to_dict()
+        }), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500

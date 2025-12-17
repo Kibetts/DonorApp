@@ -4,7 +4,7 @@ from app.models.contact import ContactSubmission
 from app.services.email_service import EmailService
 from app.services.validation_service import ValidationService
 
-bp = Blueprint('contact', __name__)
+bp = Blueprint('contact_bp', __name__)
 
 @bp.route('/submit', methods=['POST'])
 def submit():

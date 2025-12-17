@@ -4,7 +4,7 @@ from app.models.newsletter import NewsletterSubscriber
 from app.services.email_service import EmailService
 from app.services.validation_service import ValidationService
 
-bp = Blueprint('newsletter', __name__)
+bp = Blueprint('newsletter_bp', __name__)
 
 @bp.route('/subscribe', methods=['POST'])
 def subscribe():
