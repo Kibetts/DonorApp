@@ -1,0 +1,50 @@
+.home {
+  width: 100%;
+}
+
+.sectionDescription {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto var(--spacing-xl);
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.programsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+.ctaCenter {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--spacing-xl);
+}
+
+.ctaSection {
+  text-align: center;
+  padding: var(--spacing-xl) 0;
+}
+
+.ctaSection h2 {
+  font-size: 2.5rem;
+  margin-bottom: var(--spacing-md);
+  color: white;
+}
+
+.ctaSection p {
+  font-size: 1.25rem;
+  opacity: 0.95;
+}
+
+@media (max-width: 768px) {
+  .programsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ctaSection h2 {
+    font-size: 2rem;
+  }
+}

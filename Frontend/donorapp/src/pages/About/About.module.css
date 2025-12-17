@@ -1,0 +1,37 @@
+.about {
+  padding: var(--spacing-2xl) 0;
+}
+
+.content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.section {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.section h2 {
+  margin-bottom: var(--spacing-md);
+  color: var(--primary-color);
+}
+
+.transparency {
+  margin-top: var(--spacing-lg);
+}
+
+.stat {
+  margin-bottom: var(--spacing-md);
+}
+
+.statBar {
+  height: 30px;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-xs);
+}
+
+.statLabel {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
