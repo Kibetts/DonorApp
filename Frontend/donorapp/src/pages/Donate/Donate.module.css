@@ -1,0 +1,10 @@
+.donate {
+  padding: var(--spacing-2xl) 0;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-xl);
+}
