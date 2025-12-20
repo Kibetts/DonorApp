@@ -1,0 +1,86 @@
+.form {
+  max-width: 600px;
+  margin: var(--spacing-xl) auto;
+  padding: var(--spacing-xl);
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.form h3 {
+  margin-bottom: var(--spacing-lg);
+  color: var(--primary-color);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+.donationType {
+  display: flex;
+  gap: var(--spacing-lg);
+  margin: var(--spacing-md) 0;
+}
+
+.donationType label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.frequency {
+  margin: var(--spacing-md) 0;
+}
+
+.frequency label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 600;
+}
+
+.frequency select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+}
+
+.error {
+  padding: var(--spacing-md);
+  background: #fee;
+  color: var(--error-color);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.successMessage {
+  max-width: 600px;
+  margin: var(--spacing-xl) auto;
+  padding: var(--spacing-2xl);
+  background: #efe;
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.successMessage h3 {
+  color: var(--success-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.secureNote {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-top: var(--spacing-md);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+}
