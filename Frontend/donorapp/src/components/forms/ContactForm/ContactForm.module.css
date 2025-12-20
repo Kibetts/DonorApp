@@ -1,0 +1,26 @@
+.form {
+  background: white;
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.error {
+  padding: var(--spacing-md);
+  background: #fee;
+  color: var(--error-color);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.successMessage {
+  background: #efe;
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.successMessage h3 {
+  color: var(--success-color);
+  margin-bottom: var(--spacing-md);
+}
