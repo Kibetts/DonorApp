@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { donationService } from '../../../services/donationService';
+import { donationService } from '@/services/donationService';
 import Input from '../../common/Input/Input';
 import Button from '../../common/Button/Button';
 import styles from './DonationForm.module.css';

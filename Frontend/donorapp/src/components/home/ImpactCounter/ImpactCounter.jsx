@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { donationService } from '../../../services/donationService';
+import { donationService } from "@/services/donationService";
 import styles from './ImpactCounter.module.css';
 
 const ImpactCounter = () => {
